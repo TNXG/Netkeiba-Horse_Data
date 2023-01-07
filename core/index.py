@@ -37,11 +37,19 @@ def getdata(horseid):
         horse_trainer = horse_trainer.replace("</a>", "").replace(" ", "")
         horse_owner = re.findall(r'<th>馬主</th>\s<td><img (.*)">(.*?)</a></td>', html)[0][1]
         horse_birthplace = re.findall(r'<th>産地</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
-        horse_Bloodline_all = get_middle_str(html, '血統</p>', '血統詳細・兄弟馬</a></p>')
-        horse_Bloodline = re.findall(r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_Bloodline_all)[0][1]
-        horse_Bloodline = horse_Bloodline + '/' + re.findall(r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_Bloodline_all)[0][1]
+        horse_bloodline_all = get_middle_str(html, '血統</p>', '血統詳細・兄弟馬</a></p>')
+        horse_bloodline = re.findall(r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
+        horse_bloodline = horse_bloodline + '/' + re.findall(r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
         hores_get_money = get_middle_str(html, '<th>獲得賞金</th>', '<th>通算成績</th>')
         hores_get_money = get_middle_str(hores_get_money, '<td>', '</td>').replace(" ", "").replace("\n", "")
+        hores_result_all = get_middle_str(html, '<th>通算成績</th>', '<th>主な勝鞍</th>')
+        hores_result = re.findall(r'<td>(.*?)\[', hores_result_all)[0].replace(" ", "") + '[' + re.findall(r'全競走成績">(.*?)</a>]', hores_result_all)[0].replace(" ", "") + ']'
+        try:
+            hores_achievement = get_middle_str(html, '受賞歴', '<div class="db_main_deta">')
+            hores_achievement = re.findall(r'<td>(.*?)</td>', hores_achievement)[0].replace(" ", "")
+            hores_achievement = hores_achievement.split("、")
+        except:
+            hores_achievement = ''
     except:
         return 'error'
 
@@ -57,12 +65,16 @@ def getdata(horseid):
         horse_trainer = "none"
     if horse_owner == "":
         horse_owner = "none"
-    if horse_Bloodline == "":
-        horse_Bloodline = "none"
+    if horse_bloodline == "":
+        horse_bloodline = "none"
     if horse_birthplace == "":
         horse_birthplace = "none"
     if hores_get_money == "":
         hores_get_money = "none"
+    if hores_result == "":
+        hores_result = "none"
+    if hores_achievement == "":
+        hores_achievement = "none"
 
     alldata = {}
     alldata['horse_jp_name'] = horse_jp_name
@@ -73,7 +85,9 @@ def getdata(horseid):
     alldata['horse_owner'] = horse_owner
     alldata['horse_birthplace'] = horse_birthplace
     alldata['horse_get_money'] = hores_get_money
-    alldata['horse_Bloodline'] = horse_Bloodline
+    alldata['horse_bloodline'] = horse_bloodline
+    alldata['horse_result'] = hores_result
+    alldata['horse_achievement'] = hores_achievement
     return json.dumps(alldata, ensure_ascii=False)
 
 
