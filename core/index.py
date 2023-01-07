@@ -29,7 +29,7 @@ def getdata(horseid):
 
     # 获取基础信息
     try:
-    # if True == True:
+        # if True == True:
         horse_jp_name = re.findall(r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
         horse_en_name = re.findall(r'\((.*?)\)の競走馬データです。', html)[0]
         horse_chinese_name = gethorsechinese(horse_jp_name)
@@ -57,82 +57,101 @@ def getdata(horseid):
         return 'error'
 
     try:
-    # if True == True:
+        # if True == True:
         # 获取赛马成绩
         url = "https://db.netkeiba.com/horse/result/" + horseid
         data = pd.read_html(url)
+        pd.set_option('max_colwidth', 400)
+        # 显示所有列，把行显示设置成最大
         pd.set_option('display.max_columns', None)
+        # 显示所有行，把列显示设置成最大
         pd.set_option('display.max_rows', None)
+        # pandas输出不换行
+        pd.set_option('expand_frame_repr', False)
         data = data.__str__()
-        data1 = get_middle_str(data, '着 順', '騎手').replace('\n\n', "")
-        data2 = get_middle_str(data, 'ペース', '上り').replace('\n\n', "")
+
+        # 以下信息仅适配东海帝王及其类似数据使用
+        # data = get_middle_str(data, '着 順', '騎手').replace('\n\n', "")
+        # data = get_middle_str(data, 'ペース', '上り').replace('\n\n', "")
+
+        # 去除首尾的中括号
+        data = data[1:-1]
         # 去掉收尾再以换行符分割字符串
-        data1 = data1.split('\n')
-        date2 = data2.split('\n')
-        data1 = json.dumps(data1, ensure_ascii=False).replace('"  \\\\", ', '')
-        data2 = json.dumps(date2, ensure_ascii=False).replace('"  \\\\", ', '')
-        clean_str1 = ' '.join(data1.split())
-        clean_str2 = ' '.join(data2.split())
-        clean_str1 = json.loads(clean_str1)
-        clean_str2 = json.loads(clean_str2)
+        data = data.split('\n')
+        # 从中去除[0]的数据
+        data = data[1:]
+        data = json.dumps(data, ensure_ascii=False)
+        # 删除数据中多余的空格
+        clean_str = ' '.join(data.split())
+        clean_str = json.loads(clean_str)
         horse_race = []
-        t = 0
-        for i in clean_str1:
-            tt = 0
+        for i in clean_str:
             i = i.split(' ')
             race_date = i[1]
             racecourse_weather = i[3]
             race_name = i[5]
             rece_horse_popularity = i[11]
             rece_horse_order = i[12]
-            for n in clean_str2:
-                if t < tt:
-                    continue
-                n = n.split(' ')
-                rece_horse_rider = n[1]
-                rece_horse_rider_weight = n[2]
-                rece_distance = n[3]
-                racecourse_status = n[4]
-                rece_all = {}
-                rece_all['race_date'] = race_date
-                rece_all['racecourse_weather'] = racecourse_weather
-                rece_all['race_name'] = race_name
-                rece_all['rece_horse_popularity'] = rece_horse_popularity
-                rece_all['rece_horse_order'] = rece_horse_order
-                rece_all['rece_horse_rider'] = rece_horse_rider
-                rece_all['rece_horse_rider_weight'] = rece_horse_rider_weight
-                rece_all['rece_distance'] = rece_distance
-                rece_all['racecourse_status'] = racecourse_status
-                tt = tt + 1
+            rece_horse_rider = i[13]
+            rece_horse_rider_weight = i[14]
+            rece_distance = i[15]
+            racecourse_status = i[16]
+            if race_date == '':
+                race_date = 'none'
+            if racecourse_weather == '':
+                racecourse_weather = 'none'
+            if race_name == '':
+                race_name = 'none'
+            if rece_horse_popularity == '':
+                rece_horse_popularity = 'none'
+            if rece_horse_order == '':
+                rece_horse_order = 'none'
+            if rece_horse_rider == '':
+                rece_horse_rider = 'none'
+            if rece_horse_rider_weight == '':
+                rece_horse_rider_weight = 'none'
+            if rece_distance == '':
+                rece_distance = 'none'
+            if racecourse_status == '':
+                racecourse_status = 'none'
+            rece_all = {}
+            rece_all['race_date'] = race_date
+            rece_all['racecourse_weather'] = racecourse_weather
+            rece_all['race_name'] = race_name
+            rece_all['rece_horse_popularity'] = rece_horse_popularity
+            rece_all['rece_horse_order'] = rece_horse_order
+            rece_all['rece_horse_rider'] = rece_horse_rider
+            rece_all['rece_horse_rider_weight'] = rece_horse_rider_weight
+            rece_all['rece_distance'] = rece_distance
+            rece_all['racecourse_status'] = racecourse_status
             horse_race.append(rece_all)
-            t += 1
     except:
         horse_race = ''
 
-    if horse_jp_name == "":
-        horse_jp_name = "none"
-    if horse_en_name == "":
-        horse_en_name = "none"
-    if horse_chinese_name == "":
-        horse_chinese_name = "none"
-    if horse_birth == "":
-        horse_birth = "none"
-    if horse_trainer == "":
-        horse_trainer = "none"
-    if horse_owner == "":
-        horse_owner = "none"
-    if horse_bloodline == "":
-        horse_bloodline = "none"
-    if horse_birthplace == "":
-        horse_birthplace = "none"
-    if hores_get_money == "":
-        hores_get_money = "none"
-    if hores_result == "":
-        hores_result = "none"
-    if hores_achievement == "":
-        hores_achievement = "none"
-    if horse_race == "":
-        horse_race = "none"
+    if horse_jp_name == '':
+        horse_jp_name = 'none'
+    if horse_en_name == '':
+        horse_en_name = 'none'
+    if horse_chinese_name == '':
+        horse_chinese_name = 'none'
+    if horse_birth == '':
+        horse_birth = 'none'
+    if horse_trainer == '':
+        horse_trainer = 'none'
+    if horse_owner == '':
+        horse_owner = 'none'
+    if horse_bloodline == '':
+        horse_bloodline = 'none'
+    if horse_birthplace == '':
+        horse_birthplace = 'none'
+    if hores_get_money == '':
+        hores_get_money = 'none'
+    if hores_result == '':
+        hores_result = 'none'
+    if hores_achievement == '':
+        hores_achievement = 'none'
+    if horse_race == '':
+        horse_race = 'none'
 
     alldata = {}
     alldata['horse_jp_name'] = horse_jp_name
