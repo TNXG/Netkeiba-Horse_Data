@@ -9,10 +9,9 @@ import json
 import re
 import sys
 
+import pandas as pd
 import requests
 import zhconv
-import logging
-import scrapy
 
 
 def php_get():
@@ -27,6 +26,8 @@ def getdata(horseid):
     response = requests.get(url, headers=headers)
     response.encoding = "EUC-JP"
     html = response.text
+
+    # 获取基础信息
     try:
     # if True == True:
         horse_jp_name = re.findall(r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
@@ -39,11 +40,13 @@ def getdata(horseid):
         horse_birthplace = re.findall(r'<th>産地</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
         horse_bloodline_all = get_middle_str(html, '血統</p>', '血統詳細・兄弟馬</a></p>')
         horse_bloodline = re.findall(r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
-        horse_bloodline = horse_bloodline + '/' + re.findall(r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
+        horse_bloodline = horse_bloodline + '/' + \
+                          re.findall(r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
         hores_get_money = get_middle_str(html, '<th>獲得賞金</th>', '<th>通算成績</th>')
         hores_get_money = get_middle_str(hores_get_money, '<td>', '</td>').replace(" ", "").replace("\n", "")
         hores_result_all = get_middle_str(html, '<th>通算成績</th>', '<th>主な勝鞍</th>')
-        hores_result = re.findall(r'<td>(.*?)\[', hores_result_all)[0].replace(" ", "") + '[' + re.findall(r'全競走成績">(.*?)</a>]', hores_result_all)[0].replace(" ", "") + ']'
+        hores_result = re.findall(r'<td>(.*?)\[', hores_result_all)[0].replace(" ", "") + '[' + \
+                       re.findall(r'全競走成績">(.*?)</a>]', hores_result_all)[0].replace(" ", "") + ']'
         try:
             hores_achievement = get_middle_str(html, '受賞歴', '<div class="db_main_deta">')
             hores_achievement = re.findall(r'<td>(.*?)</td>', hores_achievement)[0].replace(" ", "")
@@ -52,6 +55,59 @@ def getdata(horseid):
             hores_achievement = ''
     except:
         return 'error'
+
+    try:
+    # if True == True:
+        # 获取赛马成绩
+        url = "https://db.netkeiba.com/horse/result/" + horseid
+        data = pd.read_html(url)
+        pd.set_option('display.max_columns', None)
+        pd.set_option('display.max_rows', None)
+        data = data.__str__()
+        data1 = get_middle_str(data, '着 順', '騎手').replace('\n\n', "")
+        data2 = get_middle_str(data, 'ペース', '上り').replace('\n\n', "")
+        # 去掉收尾再以换行符分割字符串
+        data1 = data1.split('\n')
+        date2 = data2.split('\n')
+        data1 = json.dumps(data1, ensure_ascii=False).replace('"  \\\\", ', '')
+        data2 = json.dumps(date2, ensure_ascii=False).replace('"  \\\\", ', '')
+        clean_str1 = ' '.join(data1.split())
+        clean_str2 = ' '.join(data2.split())
+        clean_str1 = json.loads(clean_str1)
+        clean_str2 = json.loads(clean_str2)
+        horse_race = []
+        t = 0
+        for i in clean_str1:
+            tt = 0
+            i = i.split(' ')
+            race_date = i[1]
+            racecourse_weather = i[3]
+            race_name = i[5]
+            rece_horse_popularity = i[11]
+            rece_horse_order = i[12]
+            for n in clean_str2:
+                if t < tt:
+                    continue
+                n = n.split(' ')
+                rece_horse_rider = n[1]
+                rece_horse_rider_weight = n[2]
+                rece_distance = n[3]
+                racecourse_status = n[4]
+                rece_all = {}
+                rece_all['race_date'] = race_date
+                rece_all['racecourse_weather'] = racecourse_weather
+                rece_all['race_name'] = race_name
+                rece_all['rece_horse_popularity'] = rece_horse_popularity
+                rece_all['rece_horse_order'] = rece_horse_order
+                rece_all['rece_horse_rider'] = rece_horse_rider
+                rece_all['rece_horse_rider_weight'] = rece_horse_rider_weight
+                rece_all['rece_distance'] = rece_distance
+                rece_all['racecourse_status'] = racecourse_status
+                tt = tt + 1
+            horse_race.append(rece_all)
+            t += 1
+    except:
+        horse_race = ''
 
     if horse_jp_name == "":
         horse_jp_name = "none"
@@ -75,6 +131,8 @@ def getdata(horseid):
         hores_result = "none"
     if hores_achievement == "":
         hores_achievement = "none"
+    if horse_race == "":
+        horse_race = "none"
 
     alldata = {}
     alldata['horse_jp_name'] = horse_jp_name
@@ -88,6 +146,7 @@ def getdata(horseid):
     alldata['horse_bloodline'] = horse_bloodline
     alldata['horse_result'] = hores_result
     alldata['horse_achievement'] = hores_achievement
+    alldata['horse_race'] = horse_race
     return json.dumps(alldata, ensure_ascii=False)
 
 
