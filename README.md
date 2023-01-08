@@ -31,9 +31,11 @@ PHP需要开启`exec`函数，以便于调用Python脚本。
 
 ## 须知
 
-本项目仅供学习交流使用，不得用于商业用途。
+本项目仅供学习交流使用，其子项目带来的一切后果与本项目无关。
 
 数据来源于[netkeiba.com](https://netkeiba.com)，版权归[netkeiba.com](https://netkeiba.com)所有。
+
+项目于2023年1月8日起修改为GNU GENERAL PUBLIC LICENSE Version 3(GNU GPLv3)协议。
 
 ## 其他
 
