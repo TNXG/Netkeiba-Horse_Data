@@ -23,31 +23,49 @@ def getdata(horseid):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
     }
-    response = requests.get(url, headers=headers)
+    cookie = {
+        "nkauth": "netkeiba的登录Cookie"
+    }
+    response = requests.get(url, headers=headers, cookies=cookie)
     response.encoding = "EUC-JP"
     html = response.text
 
     # 获取基础信息
     try:
         # if True == True:
-        horse_jp_name = re.findall(r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
+        horse_jp_name = re.findall(
+            r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
         horse_en_name = re.findall(r'\((.*?)\)の競走馬データです。', html)[0]
         horse_chinese_name = gethorsechinese(horse_jp_name)
-        horse_birth = re.findall(r'<th>生年月日</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
-        horse_trainer = re.findall(r'<th>調教師</th>\s<td><a href=(.*?)>(.*?)</td>', html)[0][1]
+        horse_birth = re.findall(
+            r'<th>生年月日</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
+        horse_trainer = re.findall(
+            r'<th>調教師</th>\s<td><a href=(.*?)>(.*?)</td>', html)[0][1]
         horse_trainer = horse_trainer.replace("</a>", "").replace(" ", "")
-        horse_owner = re.findall(r'<th>馬主</th>\s<td><img (.*)">(.*?)</a></td>', html)[0][1]
-        horse_birthplace = re.findall(r'<th>産地</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
-        horse_bloodline_all = get_middle_str(html, '血統</p>', '血統詳細・兄弟馬</a></p>')
-        horse_bloodline = re.findall(r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
-        horse_bloodline = horse_bloodline + '/' + re.findall(r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
-        hores_get_money = get_middle_str(html, '<th>獲得賞金</th>', '<th>通算成績</th>')
-        hores_get_money = get_middle_str(hores_get_money, '<td>', '</td>').replace(" ", "").replace("\n", "")
-        hores_result_all = get_middle_str(html, '<th>通算成績</th>', '<th>主な勝鞍</th>')
-        hores_result = re.findall(r'<td>(.*?)\[', hores_result_all)[0].replace(" ", "") + '[' + re.findall(r'全競走成績">(.*?)</a>]', hores_result_all)[0].replace(" ", "") + ']'
+        horse_owner = re.findall(
+            r'<th>馬主</th>\s<td><img (.*)">(.*?)</a></td>', html)[0][1]
+        horse_birthplace = re.findall(
+            r'<th>産地</th>\s<td>(.*?)</td>', html)[0].replace(" ", "")
+        horse_bloodline_all = get_middle_str(
+            html, '血統</p>', '血統詳細・兄弟馬</a></p>')
+        horse_bloodline = re.findall(
+            r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
+        horse_bloodline = horse_bloodline + '/' + \
+            re.findall(
+                r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
+        hores_get_money = get_middle_str(
+            html, '<th>獲得賞金</th>', '<th>通算成績</th>')
+        hores_get_money = get_middle_str(
+            hores_get_money, '<td>', '</td>').replace(" ", "").replace("\n", "")
+        hores_result_all = get_middle_str(
+            html, '<th>通算成績</th>', '<th>主な勝鞍</th>')
+        hores_result = re.findall(r'<td>(.*?)\[', hores_result_all)[0].replace(
+            " ", "") + '[' + re.findall(r'全競走成績">(.*?)</a>]', hores_result_all)[0].replace(" ", "") + ']'
         try:
-            hores_achievement = get_middle_str(html, '受賞歴', '<div class="db_main_deta">')
-            hores_achievement = re.findall(r'<td>(.*?)</td>', hores_achievement)[0].replace(" ", "")
+            hores_achievement = get_middle_str(
+                html, '受賞歴', '<div class="db_main_deta">')
+            hores_achievement = re.findall(
+                r'<td>(.*?)</td>', hores_achievement)[0].replace(" ", "")
             hores_achievement = hores_achievement.split("、")
         except:
             hores_achievement = ''
@@ -199,7 +217,8 @@ def gethorsechinese(horsename):
             }
             response = requests.post(url, headers=headers, data=data)
             response.encoding = "utf-8"
-            horse_chinese_name = re.findall(r'<td width=70>(.*?)</td><td width=70>', response.text)[0]
+            horse_chinese_name = re.findall(
+                r'<td width=70>(.*?)</td><td width=70>', response.text)[0]
             horse_chinese_name = zhconv.convert(horse_chinese_name, 'zh-cn')
             return horse_chinese_name
         except:
@@ -220,4 +239,3 @@ if __name__ == '__main__':
 
 
 # 呃啊，不行了，我要吐槽以下IntelliJ IDEA的代码高亮，实在是不太会玩，看的我眼睛都瞎了（还是VSCODE的代码高亮最舒服
-# 虽然IntelliJ IDEA设置的是第三方的VSCODE主题但它的高亮真的不如VSCODE，要不是因为我VSCODE连不上Copilot要不然我才不会去碰IntelliJ IDEA的（大雾
