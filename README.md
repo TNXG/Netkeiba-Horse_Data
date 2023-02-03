@@ -20,12 +20,33 @@
 cd core
 pip install -r requirements.txt
 ```
+### 3. 配置Netkeiba账户信息
 
-### 3. PHP配置
+#### 3.1 注册
+
+首先，您需要在[netkeiba.com](https://netkeiba.com)注册一个账户，然后在`core/index.py`的`Cookie`字段中填写您的账户信息。
+
+#### 3.2 获取网页Cookie信息
+
+访问一匹赛马的信息页面（这里以[东海帝王](https://db.netkeiba.com/horse/1981107017/)的信息为例）
+
+访问 [https://db.netkeiba.com/horse/1981107017/](https://db.netkeiba.com/horse/1981107017/)
+
+使用`F12`打开开发者工具，点击`Network`，然后刷新网页，翻到最上面，找到`1981107017/`这个请求，展开
+
+下翻找到`请求标头`，找到`cookie`项，然后其中的`nkauth`和`nd_ua`就是需要的信息 ~~(我也不知道`nd_ua`有什么用~~
+
+#### 3.3 我们为什么需要这些信息？
+
+部分赛马，比如[鲁道夫象征](https://db.netkeiba.com/horse/1981107017/)，需要登录才能获取完整的竞赛信息，所以我们需要通过cookie登录，才能获取到这些数据。
+
+### 4. PHP配置
 
 PHP需要开启`exec`函数，以便于调用Python脚本。
 
-### 4. 运行
+tips: php的exec函数并不安全，建议使用python的flask、fastapi等框架来改写运行本项目。
+
+### 5. 运行
 
 按照上述步骤安装好环境后，直接访问即可，若无法正常输出数据，请检查您的服务器是否开启了`exec`函数及服务器是否可以链接到[netkeiba.com](https://netkeiba.com)
 

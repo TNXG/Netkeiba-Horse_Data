@@ -1,10 +1,3 @@
-"""
-@Project   : Get_Netkeiba_data
-@Author    : tianxiang_tnxg
-@Blog      : https://blog.tnxg.top
-@Use       : /v1/netkeiba/horse/
-@Other     : 可惜你不看赛马娘，也不知道她们在我心里的意义。
-"""
 import json
 import re
 import sys
@@ -13,15 +6,11 @@ import pandas as pd
 import requests
 import zhconv
 
-# 通过登录获得完整数据
+# 测试Netkeiba登录
 cookie = {
     "nkauth": "你的Netkeiba Cookie nkauth 字符段",
     "nd_ua": "你的Netkeiba Cookie nd_ua 字符段"
 }
-
-
-def php_get():
-    print(getdata(sys.argv[1]))
 
 
 def getdata(horseid):
@@ -242,8 +231,4 @@ def get_middle_str(content, start_str, end_str):
     return result[0]
 
 
-if __name__ == '__main__':
-    php_get()
-
-
-# 呃啊，不行了，我要吐槽以下IntelliJ IDEA的代码高亮，实在是不太会玩，看的我眼睛都瞎了（还是VSCODE的代码高亮最舒服
+print(getdata('1981107017'))
