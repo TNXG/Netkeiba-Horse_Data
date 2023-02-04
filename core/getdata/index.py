@@ -7,7 +7,6 @@
 """
 import json
 import re
-import sys
 
 import pandas as pd
 import requests
@@ -20,11 +19,7 @@ cookie = {
 }
 
 
-def php_get():
-    print(getdata(sys.argv[1]))
-
-
-def getdata(horseid):
+def gethorsedata(horseid):
     url = "https://db.netkeiba.com/horse/" + horseid
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
@@ -34,8 +29,8 @@ def getdata(horseid):
     html = response.text
 
     # 获取基础信息
-    try:
-        # if True == True:
+    # try:
+    if True == True:
         horse_jp_name = re.findall(
             r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
         horse_en_name = re.findall(r'\((.*?)\)の競走馬データです。', html)[0]
@@ -72,11 +67,11 @@ def getdata(horseid):
             hores_achievement = hores_achievement.split("、")
         except:
             hores_achievement = ''
-    except:
-        return 'error'
+    # except:
+    #     return 'error'
 
-    try:
-        # if True == True:
+    # try:
+    if True == True:
         # 获取赛马成绩
         url = "https://db.netkeiba.com/horse/result/" + horseid
         headers = {
@@ -151,8 +146,8 @@ def getdata(horseid):
             rece_all['rece_distance'] = rece_distance
             rece_all['racecourse_status'] = racecourse_status
             horse_race.append(rece_all)
-    except:
-        horse_race = ''
+    # except:
+    #     horse_race = ''
 
     if horse_jp_name == '':
         horse_jp_name = 'none'
@@ -240,10 +235,3 @@ def get_middle_str(content, start_str, end_str):
     pattern = re.compile(pattern_str, re.S)
     result = pattern.findall(content)
     return result[0]
-
-
-if __name__ == '__main__':
-    php_get()
-
-
-# 呃啊，不行了，我要吐槽以下IntelliJ IDEA的代码高亮，实在是不太会玩，看的我眼睛都瞎了（还是VSCODE的代码高亮最舒服

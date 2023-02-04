@@ -2,29 +2,30 @@
 
 ## 简介
 
-通过Python正则爬取[netkeiba.com](https://netkeiba.com)的赛马数据，通过PHP将信息返回到前端。
+通过Python正则和Python Pandas爬取[netkeiba.com](https://netkeiba.com)的赛马数据
 
 包括赛马的基本信息、赛马的赛事信息等。
 
+目前本项目通过Python FastAPI提供网络服务，旧版本（php+python）请查看`v1`分支
+
 ## 使用方法
 
-### 1. 安装PHP和Python
+### 1. 安装Python
 
-我们需要PHP和Python来运行本项目，通过Python爬取数据，通过PHP将数据返回到前端。
+我们使用Python来运行本项目，所以您需要安装Python环境。
 
-默认运行环境为PHP8.1.12和Python3.9.9。
+默认运行环境为Python3.9.9。
 
 ### 2. 安装Python依赖
 
 ```bash
-cd core
 pip install -r requirements.txt
 ```
 ### 3. 配置Netkeiba账户信息
 
 #### 3.1 注册
 
-首先，您需要在[netkeiba.com](https://netkeiba.com)注册一个账户，然后在`core/index.py`的`Cookie`字段中填写您的账户信息。
+首先，您需要在[netkeiba.com](https://netkeiba.com)注册一个账户，然后在`core/getdata/index.py`的`Cookie`字段中填写您的账户信息。
 
 #### 3.2 获取网页Cookie信息
 
@@ -40,15 +41,9 @@ pip install -r requirements.txt
 
 部分赛马，比如[鲁道夫象征](https://db.netkeiba.com/horse/1981107017/)，需要登录才能获取完整的竞赛信息，所以我们需要通过cookie登录，才能获取到这些数据。
 
-### 4. PHP配置
-
-PHP需要开启`exec`函数，以便于调用Python脚本。
-
-tips: php的exec函数并不安全，建议使用python的flask、fastapi等框架来改写运行本项目。
-
 ### 5. 运行
 
-按照上述步骤安装好环境后，直接访问即可，若无法正常输出数据，请检查您的服务器是否开启了`exec`函数及服务器是否可以链接到[netkeiba.com](https://netkeiba.com)
+按照上述步骤安装好环境后，直接访问即可，若无法正常输出数据，请检查您的服务器是否可以链接到[netkeiba.com](https://netkeiba.com)
 
 ## 须知
 
