@@ -33,6 +33,7 @@ def gethorsedata(horseid):
     if True == True:
         horse_jp_name = re.findall(
             r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
+        horse_jp_name = re.sub(r'\(.*?\)', '', horse_jp_name)
         horse_en_name = re.findall(r'\((.*?)\)の競走馬データです。', html)[0]
         horse_chinese_name = gethorsechinese(horse_jp_name)
         horse_birth = re.findall(
