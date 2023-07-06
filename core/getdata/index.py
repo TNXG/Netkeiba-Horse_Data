@@ -112,11 +112,11 @@ def gethorsedata(horseid):
             race_date = i[1]
             racecourse_weather = i[3]
             race_name = i[5]
-            rece_horse_popularity = i[11]
-            rece_horse_order = i[12]
-            rece_horse_rider = i[13]
-            rece_horse_rider_weight = i[14]
-            rece_distance = i[15]
+            race_horse_popularity = i[11]
+            race_horse_order = i[12]
+            race_horse_rider = i[13]
+            race_horse_rider_weight = i[14]
+            race_distance = i[15]
             racecourse_status = i[16]
             if race_date == '':
                 race_date = 'none'
@@ -124,29 +124,29 @@ def gethorsedata(horseid):
                 racecourse_weather = 'none'
             if race_name == '':
                 race_name = 'none'
-            if rece_horse_popularity == '':
-                rece_horse_popularity = 'none'
-            if rece_horse_order == '':
-                rece_horse_order = 'none'
-            if rece_horse_rider == '':
-                rece_horse_rider = 'none'
-            if rece_horse_rider_weight == '':
-                rece_horse_rider_weight = 'none'
-            if rece_distance == '':
-                rece_distance = 'none'
+            if race_horse_popularity == '':
+                race_horse_popularity = 'none'
+            if race_horse_order == '':
+                race_horse_order = 'none'
+            if race_horse_rider == '':
+                race_horse_rider = 'none'
+            if race_horse_rider_weight == '':
+                race_horse_rider_weight = 'none'
+            if race_distance == '':
+                race_distance = 'none'
             if racecourse_status == '':
                 racecourse_status = 'none'
-            rece_all = {}
-            rece_all['race_date'] = race_date
-            rece_all['racecourse_weather'] = racecourse_weather
-            rece_all['race_name'] = race_name
-            rece_all['rece_horse_popularity'] = rece_horse_popularity
-            rece_all['rece_horse_order'] = rece_horse_order
-            rece_all['rece_horse_rider'] = rece_horse_rider
-            rece_all['rece_horse_rider_weight'] = rece_horse_rider_weight
-            rece_all['rece_distance'] = rece_distance
-            rece_all['racecourse_status'] = racecourse_status
-            horse_race.append(rece_all)
+            race_all = {}
+            race_all['race_date'] = race_date
+            race_all['racecourse_weather'] = racecourse_weather
+            race_all['race_name'] = race_name
+            race_all['race_horse_popularity'] = race_horse_popularity
+            race_all['race_horse_order'] = race_horse_order
+            race_all['race_horse_rider'] = race_horse_rider
+            race_all['race_horse_rider_weight'] = race_horse_rider_weight
+            race_all['race_distance'] = race_distance
+            race_all['racecourse_status'] = racecourse_status
+            horse_race.append(race_all)
     except Exception as e:
         horse_race = ''
 
