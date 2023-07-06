@@ -29,8 +29,8 @@ def gethorsedata(horseid):
     html = response.text
 
     # 获取基础信息
-    # try:
-    if True == True:
+    try:
+        # if True == True:
         horse_jp_name = re.findall(
             r'<title>(.*?)\| 競走馬データ - netkeiba\.com</title>', html)[0].replace(" ", "")
         horse_jp_name = re.sub(r'\(.*?\)', '', horse_jp_name)
@@ -50,8 +50,8 @@ def gethorsedata(horseid):
         horse_bloodline = re.findall(
             r'<td rowspan="2" class="b_ml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
         horse_bloodline = horse_bloodline + '/' + \
-            re.findall(
-                r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
+                          re.findall(
+                              r'<td rowspan="2" class="b_fml">\s<a (.*?)">(.*?)</a>', horse_bloodline_all)[0][1]
         hores_get_money = get_middle_str(
             html, '<th>獲得賞金</th>', '<th>通算成績</th>')
         hores_get_money = get_middle_str(
@@ -68,11 +68,11 @@ def gethorsedata(horseid):
             hores_achievement = hores_achievement.split("、")
         except:
             hores_achievement = ''
-    # except:
-    #     return 'error'
+    except Exception as e:
+        return 'error'
 
-    # try:
-    if True == True:
+    try:
+        # if True == True:
         # 获取赛马成绩
         url = "https://db.netkeiba.com/horse/result/" + horseid
         headers = {
@@ -147,8 +147,41 @@ def gethorsedata(horseid):
             rece_all['rece_distance'] = rece_distance
             rece_all['racecourse_status'] = racecourse_status
             horse_race.append(rece_all)
-    # except:
-    #     horse_race = ''
+    except Exception as e:
+        horse_race = ''
+
+    try:
+        # 获取赛马血统
+        url = "https://db.netkeiba.com/horse/ped/" + horseid
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36"
+        }
+        response = requests.get(url, headers=headers, cookies=cookie)
+        response.encoding = "EUC-JP"
+        data = pd.read_html(response.text)[0]
+        pd.set_option('max_colwidth', 400)
+        # 显示所有列，把行显示设置成最大
+        pd.set_option('display.max_columns', None)
+        # 显示所有行，把列显示设置成最大
+        pd.set_option('display.max_rows', None)
+        # pandas输出不换行
+        pd.set_option('expand_frame_repr', False)
+        父 = data.iloc[0, 0]
+        父 = re.search(r'(\D+)', 父).group(0).rstrip() + '|' + re.search(r'(\d{4})', 父).group(0)
+        母 = data.iloc[16, 0]
+        母 = re.search(r'(\D+)', 母).group(0).rstrip() + '|' + re.search(r'(\d{4})', 母).group(0)
+        祖父 = data.iloc[0, 1]
+        祖父 = re.search(r'(\D+)', 祖父).group(0).rstrip() + '|' + re.search(r'(\d{4})', 祖父).group(0)
+        祖母 = data.iloc[8, 1]
+        祖母 = re.search(r'(\D+)', 祖母).group(0).rstrip() + '|' + re.search(r'(\d{4})', 祖母).group(0)
+        母父 = data.iloc[16, 1]
+        母父 = re.search(r'(\D+)', 母父).group(0).rstrip() + '|' + re.search(r'(\d{4})', 母父).group(0)
+        外祖母 = data.iloc[26, 1]
+        外祖母 = re.search(r'(\D+)', 外祖母).group(0).rstrip() + '|' + re.search(r'(\d{4})', 外祖母).group(0)
+        hores_blood = {"父": 父, "母": 母, "祖父": 祖父, "祖母": 祖母, "母父": 母父, "外祖母": 外祖母}
+    except Exception as e:
+        hores_blood = ''
+        print(e)
 
     if horse_jp_name == '':
         horse_jp_name = 'none'
@@ -188,6 +221,7 @@ def gethorsedata(horseid):
     alldata['horse_result'] = hores_result
     alldata['horse_achievement'] = hores_achievement
     alldata['horse_race'] = horse_race
+    alldata['horse_blood'] = hores_blood
     return json.dumps(alldata, ensure_ascii=False)
 
 

@@ -6,7 +6,7 @@
 
 包括赛马的基本信息、赛马的赛事信息等。
 
-目前本项目通过Python FastAPI提供网络服务，旧版本（php+python）请查看`v1`分支
+目前本项目通过Python Flask提供网络服务，旧版本（php+python）请查看`v1`分支
 
 ## 使用方法
 
@@ -41,7 +41,7 @@ pip install -r requirements.txt
 
 部分赛马，比如[鲁道夫象征](https://db.netkeiba.com/horse/1981107017/)，需要登录才能获取完整的竞赛信息，所以我们需要通过cookie登录，才能获取到这些数据。
 
-### 5. 运行
+### 4. 运行
 
 按照上述步骤安装好环境后，直接访问即可，若无法正常输出数据，请检查您的服务器是否可以链接到[netkeiba.com](https://netkeiba.com)
 
@@ -49,7 +49,7 @@ pip install -r requirements.txt
 
 本项目仅供学习交流使用，其子项目带来的一切后果与本项目无关。
 
-数据来源于[netkeiba.com](https://netkeiba.com)，版权归[netkeiba.com](https://netkeiba.com)所有。
+数据来源于[netkeiba.com](https://netkeiba.com)，除去译名以外的所有数据版权归[netkeiba.com](https://netkeiba.com)所有。
 
 项目于2023年1月8日起修改为GNU GENERAL PUBLIC LICENSE Version 3(GNU GPLv3)协议。
 
@@ -69,3 +69,22 @@ pip install -r requirements.txt
 * 提交PR前，请先检查翻译是否已经存在。请注意，马主翻译优先级最高，其次是香港马会的中文译名，最后是人们共识的中文译名。（コントレイル：铁鸟翱天>飞机云，セイウンスカイ：青云天空>星云天空）
 * json内`"all"`、`"jp2cn"`、`"cn2jp"`都需要填写，请按照原先内容格式进行补充，请将新的补充放在最后一行。
 
+# 更新日志
+
+### 2023-7-6
+
+* 新增血统数据的获取
+* 更换Web框架为Flask
+* 新增译名
+
+### 2023-4-16
+
+* 修复从wpstud获取中文名出现问题的Bug
+
+### 2023-3-5
+
+* 更换Web框架为FastAPI
+
+### 2023-3-2
+
+* 新增Netkeiba账户信息配置，部分赛马需要登录才能获取完整的竞赛信息，所以我们需要通过cookie登录，才能获取到这些数据。
